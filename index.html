@@ -103,11 +103,33 @@
     color: #999;
     padding: 20px 0;
   }
+  .container { position: relative; }
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: 1px solid #ccc;
+    background: transparent;
+    border-radius: 20px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  body.dark { background: #0d1117; color: #e6edf3; }
+  body.dark .container { background: #161b22; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  body.dark #taskInput { background: #0d1117; color: #e6edf3; border-color: #30363d; }
+  body.dark .filter-btn { background: #161b22; color: #e6edf3; border-color: #30363d; }
+  body.dark .filter-btn.active { background: #0366d6; color: #fff; border-color: #0366d6; }
+  body.dark li { border-bottom-color: #30363d; }
+  body.dark li.completed span { color: #6e7681; }
+  body.dark .empty-msg { color: #8b949e; }
+  body.dark .theme-toggle { border-color: #30363d; }
 </style>
 </head>
 <body>
 
 <div class="container">
+  <button id="themeToggle" class="theme-toggle" aria-label="Switch to dark mode">🌙</button>
   <h1>📝 To-Do List</h1>
 
   <div class="input-row">
@@ -227,6 +249,37 @@
   });
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+  });
+
+  const THEME_KEY = 'todo-list-theme';
+  const themeToggle = document.getElementById('themeToggle');
+
+  function loadTheme() {
+    try {
+      return localStorage.getItem(THEME_KEY) || 'light';
+    } catch (e) {
+      return 'light';
+    }
+  }
+
+  function applyTheme(theme) {
+    const isDark = theme === 'dark';
+    document.body.classList.toggle('dark', isDark);
+    themeToggle.textContent = isDark ? '☀️' : '🌙';
+    themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  let currentTheme = loadTheme();
+  applyTheme(currentTheme);
+
+  themeToggle.addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(currentTheme);
+    try {
+      localStorage.setItem(THEME_KEY, currentTheme);
+    } catch (e) {
+      // ignore if localStorage is unavailable
+    }
   });
 
   render();
