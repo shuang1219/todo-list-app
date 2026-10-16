@@ -164,6 +164,7 @@
   <ul id="taskList"></ul>
 </div>
 
+<script src="todo-utils.js"></script>
 <script>
   const STORAGE_KEY = 'todo-list-tasks';
 
@@ -256,12 +257,7 @@
     saveTasks();
     taskList.innerHTML = '';
 
-    let filteredTasks = tasks;
-    if (currentFilter === 'active') {
-      filteredTasks = tasks.filter(t => !t.completed);
-    } else if (currentFilter === 'completed') {
-      filteredTasks = tasks.filter(t => t.completed);
-    }
+    const filteredTasks = filterTasks(tasks, currentFilter);
 
     if (filteredTasks.length === 0) {
       const msg = document.createElement('div');
